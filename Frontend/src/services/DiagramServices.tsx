@@ -1,89 +1,109 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import url from '../api/api';
-// import { logout } from '../utils/utils';
+
+// Define types for API responses
+interface DiagramResponse {
+  // Update with the actual structure of the diagram response
+  id: string;
+  name: string;
+  content: string;
+}
+
+interface CreateDiagramResponse {
+  // Update with the actual structure of the create diagram response
+  success: boolean;
+  message: string;
+  diagramId?: string;
+}
+
+interface UpdateDiagramResponse {
+  // Update with the actual structure of the update diagram response
+  success: boolean;
+  message: string;
+}
+
+// Helper function to handle Axios errors
+const handleAxiosError = (error: unknown): void => {
+  if (axios.isAxiosError(error)) {
+    if (error.response?.status === 401) {
+      console.error('Unauthorized: Invalid token or session expired');
+      // Optionally, implement logout logic here
+    } else {
+      console.error('An error occurred:', error.response?.data || error.message);
+    }
+  } else {
+    console.error('An unexpected error occurred:', error);
+  }
+};
 
 // Get Diagrams
-const getDiagrams = async (code?: string | null) => {
+const getDiagrams = async (code?: string | null): Promise<DiagramResponse[]> => {
   try {
     const accessToken = localStorage.getItem('accessToken') || code;
+    if (!accessToken) {
+      throw new Error('Access token is missing');
+    }
+
     const options = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     };
+
     const URL = `${url}/user/diagram`;
-    return await axios.get(URL, options);
+    const response: AxiosResponse<DiagramResponse[]> = await axios.get(URL, options);
+    return response.data; // Return the data from the response
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response && error.response.status === 401) {
-        console.error('Unauthorized: Invalid token or session expired');
-        // Handle 401 errorlogout
-        // logout();
-      } else {
-        console.error('An error occurred:', error.response?.data);
-        // logout();
-      }
-    } else {
-      console.error('An unexpected error occurred:', error);
-    }
+    handleAxiosError(error);
+    throw error; // Re-throw the error to handle it in the calling function
   }
 };
 
-// update Diagrams
-const updateDiagrams = async (json: object) => {
+// Update Diagrams
+const updateDiagrams = async (json: object): Promise<UpdateDiagramResponse> => {
   try {
     const accessToken = localStorage.getItem('accessToken');
-    // Set headers
+    if (!accessToken) {
+      throw new Error('Access token is missing');
+    }
+
     const headers = {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json', // Optional: Specify content type
     };
+
     const URL = `${url}/user/diagram`;
-    return await axios.post(URL, json, { headers });
+    const response: AxiosResponse<UpdateDiagramResponse> = await axios.post(URL, json, { headers });
+    return response.data; // Return the data from the response
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response && error.response.status === 401) {
-        console.error('Unauthorized: Invalid token or session expired');
-        // Handle 401 errorlogout
-        // logout();
-      } else {
-        console.error('An error occurred:', error.response?.data);
-        // logout();
-      }
-    } else {
-      console.error('An unexpected error occurred:', error);
-    }
+    handleAxiosError(error);
+    throw error;
   }
 };
 
-const createDiagrams = async (json: object) => {
+// Create Diagrams
+const createDiagrams = async (json: object): Promise<CreateDiagramResponse> => {
   try {
     const accessToken = localStorage.getItem('accessToken');
-    // Set headers
+    if (!accessToken) {
+      throw new Error('Access token is missing');
+    }
+
     const headers = {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json', // Optional: Specify content type
     };
+
     const URL = `${url}/user/createDiagram`;
-    return await axios.post(URL, json, { headers });
+    const response: AxiosResponse<CreateDiagramResponse> = await axios.post(URL, json, { headers });
+    return response.data; // Return the data from the response
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response && error.response.status === 401) {
-        console.error('Unauthorized: Invalid token or session expired');
-        // Handle 401 errorlogout
-        // logout();
-      } else {
-        console.error('An error occurred:', error.response?.data);
-        // logout();
-      }
-    } else {
-      console.error('An unexpected error occurred:', error);
-    }
+    handleAxiosError(error);
+    throw error;
   }
-}
+};
 
 export {
-  // Diagrams
   getDiagrams,
   updateDiagrams,
   createDiagrams,

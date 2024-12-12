@@ -5,6 +5,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const { S3Client, PutObjectCommand, HeadObjectCommand } = require("@aws-sdk/client-s3");
+const userRoutes = require("./src/route/user.route"); // Adjusted path based on your structure
+const passport = require("./src/services/passport"); // Ensure this path is correct
 
 const app = express();
 const upload = multer();
@@ -18,6 +20,7 @@ const s3 = new S3Client({
 });
 
 app.use(bodyParser.json());
+app.use(passport.initialize()); // Initialize passport middleware
 
 app.post("/upload", upload.single('file'), async (req, res) => {
   const file = req.file;
@@ -62,6 +65,9 @@ app.get("/metadata", async (req, res) => {
     res.status(500).send("Error retrieving metadata");
   }
 });
+
+// Use the user routes for authentication and protected routes
+app.use('/api', userRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
