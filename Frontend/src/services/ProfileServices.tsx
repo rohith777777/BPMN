@@ -1,6 +1,5 @@
 import axios from 'axios';
-import url from '../api/api';
-// import { logout } from '../utils/utils';
+import url from '../api/api'; // Correct import for the default export
 
 // Get Profile
 const getProfile = async (code?: string | null) => {
@@ -29,14 +28,14 @@ const getProfile = async (code?: string | null) => {
   }
 };
 
-// update user profile
+// Update user profile
 const updateProfile = async (json: object) => {
   try {
     const accessToken = localStorage.getItem('accessToken');
     // Set headers
     const headers = {
       Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json', // Optional: Specify content type
+      'Content-Type': 'application/json',
     };
     const URL = `${url}/user/user-profile`;
     return await axios.put(URL, json, { headers });
@@ -57,7 +56,6 @@ const updateProfile = async (json: object) => {
 };
 
 export {
-  // user
   getProfile,
   updateProfile,
 };

@@ -1,12 +1,12 @@
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 dotenv.config();
 
-const express = require("express");
-const bodyParser = require("body-parser");
-const multer = require("multer");
-const { S3Client, PutObjectCommand, HeadObjectCommand } = require("@aws-sdk/client-s3");
-const userRoutes = require("./src/route/user.route"); // Adjusted path based on your structure
-const passport = require("./src/services/passport"); // Ensure this path is correct
+const express = require('express');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const { S3Client, PutObjectCommand, HeadObjectCommand } = require('@aws-sdk/client-s3');
+const userRoutes = require('./src/route/user.route');
+const passport = require('./src/services/passport');
 
 const app = express();
 const upload = multer();
@@ -20,9 +20,9 @@ const s3 = new S3Client({
 });
 
 app.use(bodyParser.json());
-app.use(passport.initialize()); // Initialize passport middleware
+app.use(passport.initialize());
 
-app.post("/upload", upload.single('file'), async (req, res) => {
+app.post('/upload', upload.single('file'), async (req, res) => {
   const file = req.file;
   const { username, folder, metadata } = req.body;
   const objectKey = `${username}/${folder}/${file.originalname}`;
@@ -32,24 +32,24 @@ app.post("/upload", upload.single('file'), async (req, res) => {
     Key: objectKey,
     Body: file.buffer,
     Metadata: {
-      "creation-date": metadata.creationDate,
-      "last-modified": metadata.lastModified,
-      "file-size": metadata.fileSize,
-      "user-permissions": metadata.userPermissions,
-      "file-type": metadata.fileType,
+      'creation-date': metadata.creationDate,
+      'last-modified': metadata.lastModified,
+      'file-size': metadata.fileSize,
+      'user-permissions': metadata.userPermissions,
+      'file-type': metadata.fileType,
     },
   };
 
   try {
     const command = new PutObjectCommand(params);
     await s3.send(command);
-    res.status(200).send("File uploaded successfully");
+    res.status(200).send('File uploaded successfully');
   } catch (error) {
-    res.status(500).send("Error uploading file");
+    res.status(500).send('Error uploading file');
   }
 });
 
-app.get("/metadata", async (req, res) => {
+app.get('/metadata', async (req, res) => {
   const { objectKey } = req.query;
 
   const params = {
@@ -62,14 +62,13 @@ app.get("/metadata", async (req, res) => {
     const metadata = await s3.send(command);
     res.status(200).json(metadata.Metadata);
   } catch (error) {
-    res.status(500).send("Error retrieving metadata");
+    res.status(500).send('Error retrieving metadata');
   }
 });
 
-// Use the user routes for authentication and protected routes
 app.use('/api', userRoutes);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

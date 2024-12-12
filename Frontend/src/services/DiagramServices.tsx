@@ -1,23 +1,20 @@
 import axios, { AxiosResponse } from 'axios';
-import url from '../api/api';
+import url from '../api/api'; // Correct import for the default export
 
 // Define types for API responses
 interface DiagramResponse {
-  // Update with the actual structure of the diagram response
   id: string;
   name: string;
   content: string;
 }
 
 interface CreateDiagramResponse {
-  // Update with the actual structure of the create diagram response
   success: boolean;
   message: string;
   diagramId?: string;
 }
 
 interface UpdateDiagramResponse {
-  // Update with the actual structure of the update diagram response
   success: boolean;
   message: string;
 }
@@ -69,7 +66,7 @@ const updateDiagrams = async (json: object): Promise<UpdateDiagramResponse> => {
 
     const headers = {
       Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json', // Optional: Specify content type
+      'Content-Type': 'application/json',
     };
 
     const URL = `${url}/user/diagram`;
@@ -91,7 +88,7 @@ const createDiagrams = async (json: object): Promise<CreateDiagramResponse> => {
 
     const headers = {
       Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json', // Optional: Specify content type
+      'Content-Type': 'application/json',
     };
 
     const URL = `${url}/user/createDiagram`;

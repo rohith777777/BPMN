@@ -1,18 +1,18 @@
 import axios from 'axios';
-import url from '../api/api';
+import url from '../api/api'; // Correct import for the default export
 
-// User
+// User login function
 const userLogin = async (json: object) => {
-  const URL = `${url}/user/login`
-  console.log("userLogin: ", URL, json);
   try {
     const URL = `${url}/user/login`;
+    console.log("userLogin: ", URL, json);
     return await axios.post(URL, json);
   } catch (error) {
     console.log(error);
   }
 };
-// User SingUp
+
+// User signup function
 const userRegister = async (json: object) => {
   try {
     const URL = `${url}/user/signup`;
@@ -22,7 +22,7 @@ const userRegister = async (json: object) => {
   }
 };
 
-// forgot password
+// Forgot password function
 const forgotPassword = async (json: object) => {
   try {
     const URL = `${url}/user/forgotPassword`;
@@ -31,8 +31,8 @@ const forgotPassword = async (json: object) => {
     console.log(error);
   }
 };
-// resend password reset link
 
+// Resend password reset link function
 const resendPasswordResetLink = async (json: object) => {
   try {
     const URL = `${url}/user/resendresetpassword`;
@@ -42,10 +42,10 @@ const resendPasswordResetLink = async (json: object) => {
   }
 };
 
+// Reset password function
 const resetPassword = async (token: string, password: string) => {
   try {
     const URL = `${url}/user/resetPassword/${token}`;
-
     return await axios.post(URL, { password });
   } catch (error) {
     console.log(error);
@@ -53,7 +53,6 @@ const resetPassword = async (token: string, password: string) => {
 };
 
 export {
-  // user auth
   userLogin,
   userRegister,
   forgotPassword,

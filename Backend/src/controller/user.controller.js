@@ -2,7 +2,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
-const { PutItemCommand, GetItemCommand, QueryCommand, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
+const { PutItemCommand, GetItemCommand, QueryCommand } = require('@aws-sdk/client-dynamodb');
 const { PutObjectCommand } = require('@aws-sdk/client-s3');
 const dynamoDBClient = require('../db/db.config');
 const s3Client = require('../s3/s3.config');
@@ -51,7 +51,7 @@ const defaultXML = `<?xml version="1.0" encoding="UTF-8"?>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-</bpmn:definitions>`
+</bpmn:definitions>`;
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -94,7 +94,7 @@ exports.login = async (req, res) => {
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
-    return res.status(200).json({ status: false, message: "All fields is required!" });
+    return res.status(400).json({ status: false, message: "All fields are required!" });
   }
   try {
     const getItemCommand = new GetItemCommand({
@@ -144,7 +144,7 @@ exports.signup = async (req, res) => {
         message: "Registered successfully",
       });
     } else if (Item.email.S === email) {
-      return res.status(200).json({ status: false, message: "Email is already exist!" });
+      return res.status(200).json({ status: false, message: "Email already exists!" });
     }
   } catch (err) {
     console.error("Server error during signup:", err);
@@ -189,7 +189,7 @@ exports.getDiagram = async (req, res) => {
       },
     };
 
-    const command = new QueryCommand(params);
+    const command = new QueryCommand(params); // Correct instantiation
     const response = await dynamoDBClient.send(command);
 
     const formattedData = response.Items.map((item) => formatDynamoDBItem(item));
@@ -199,6 +199,6 @@ exports.getDiagram = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching diagrams:', error);
-    res.status(500).json({ message: "Server error" });x
+    res.status(500).json({ message: "Server error" });
   }
 };
